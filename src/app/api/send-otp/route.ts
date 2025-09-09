@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export async function OPTIONS(request: NextRequest) {
+  return NextResponse.json(
+    {},
+    {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    }
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { email, name } = await request.json();
