@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 exports.handler = async (event, context) => {
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
@@ -25,9 +27,9 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { email, otp } = JSON.parse(event.body);
+    const { email, name } = JSON.parse(event.body);
 
-    if (!email || !otp) {
+    if (!email) {
       return {
         statusCode: 400,
         headers: {
@@ -35,19 +37,16 @@ exports.handler = async (event, context) => {
           'Access-Control-Allow-Methods': 'POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
         },
-        body: JSON.stringify({ success: false, error: 'Email and OTP are required' }),
+        body: JSON.stringify({ success: false, error: 'Email is required' }),
       };
     }
 
     // Forward the request to the OTP service
     const otpServiceUrl = process.env.OTP_SERVICE_URL || 'https://noor-otp-service-nd3swur9u-charanjit-singhs-projects-01b838c6.vercel.app';
 
-    console.log('Sending OTP verification request to:', otpServiceUrl + '/api/verify-otp');
+    console.log('Sending OTP request to:', `${otpServiceUrl}/api/send-otp`);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-    const response = await fetch(otpServiceUrl + '/api/verify-otp', {
+    const response = await fetch(`${otpServiceUrl}/api/send-otp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -56,17 +55,14 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         email,
-        otp,
+        name: name || 'User',
       }),
-      signal: controller.signal,
     });
 
-    clearTimeout(timeoutId);
-
-    console.log('OTP verification response status:', response.status);
+    console.log('OTP service response status:', response.status);
 
     const data = await response.json();
-    console.log('OTP verification response data:', data);
+    console.log('OTP service response data:', data);
 
     return {
       statusCode: response.status,
@@ -78,7 +74,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify(data),
     };
   } catch (error) {
-    console.error('Verify OTP API error:', error);
+    console.error('Send OTP API error:', error);
     return {
       statusCode: 500,
       headers: {
