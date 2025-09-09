@@ -1,0 +1,48 @@
+# Flutter mobile app (too large for deployment)
+noor_flutter/
+android/
+ios/
+*.apk
+*.aab
+*.ipa
+
+# Build artifacts
+.next/
+build/
+dist/
+out/
+
+# Dependencies (will be installed by Vercel)
+node_modules/
+package-lock.json
+
+# Development files
+.env*
+!.env.example
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Documentation (not needed for deployment)
+docs/
+*.md
+!README.md
+
+# Git
+.git/
+.gitignore
+
+# Deployment scripts
+deploy-full.sh
+FULL_DEPLOYMENT_GUIDE.md
