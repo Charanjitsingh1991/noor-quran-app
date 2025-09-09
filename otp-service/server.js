@@ -160,6 +160,20 @@ app.post('/api/verify-otp', async (req, res) => {
   }
 });
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Noor OTP Service is running',
+    version: '1.0.0',
+    endpoints: {
+      'POST /api/send-otp': 'Send OTP to email',
+      'POST /api/verify-otp': 'Verify OTP code',
+      'GET /api/health': 'Health check'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
