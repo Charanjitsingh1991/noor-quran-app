@@ -16,17 +16,24 @@ export async function POST(request: NextRequest) {
 
     console.log('Verifying OTP request to:', `${otpServiceUrl}/api/verify-otp`);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
     const response = await fetch(`${otpServiceUrl}/api/verify-otp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'Noor-Web-App/1.0',
+        'Accept': 'application/json',
       },
       body: JSON.stringify({
         email,
         otp,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     console.log('OTP verify response status:', response.status);
 
