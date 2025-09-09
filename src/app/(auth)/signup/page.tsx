@@ -8,6 +8,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,6 +36,7 @@ const formSchema = z.object({
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,28 +53,23 @@ export default function SignupPage() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
-
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: user.email,
+      // Instead of creating account directly, redirect to OTP verification
+      const params = new URLSearchParams({
+        email: values.email,
         name: values.name,
+        password: values.password,
         dob: values.dob.toISOString(),
         country: values.country,
         fontSize: values.fontSize,
-        photoURL: '',
       });
 
-      toast({ title: 'Success', description: 'Account created successfully.' });
-      // The layout will handle redirection
+      router.push(`/otp-verification?${params.toString()}`);
     } catch (error: any) {
       toast({
         variant: 'destructive',
         title: 'Sign Up Failed',
         description: error.message,
       });
-    } finally {
       setLoading(false);
     }
   };
