@@ -1,0 +1,26 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // PUBLIC DATA: Allow anyone to read Surahs and Ayahs
+    match /surahs/{surahId} {
+      allow read: if true;
+    }
+
+    match /ayahs/{surahId} {
+      allow read: if true;
+    }
+
+    // USER DATA: Only allow authenticated users to access their own documents.
+    match /users/{userId} {
+      // Users can read and write their own profile data.
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Users can manage their own bookmarks subcollection.
+      match /bookmarks/{bookmarkId} {
+        allow read, write, create, delete: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
