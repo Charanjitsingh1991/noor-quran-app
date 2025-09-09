@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Forward the request to the OTP service
-    const otpServiceUrl = process.env.OTP_SERVICE_URL || 'https://noor-otp-service.vercel.app';
+    const otpServiceUrl = process.env.OTP_SERVICE_URL || 'https://noor-otp-service-nd3swur9u-charanjit-singhs-projects-01b838c6.vercel.app';
 
     console.log('Verifying OTP request to:', `${otpServiceUrl}/api/verify-otp`);
 
