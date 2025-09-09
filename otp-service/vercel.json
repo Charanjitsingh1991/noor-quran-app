@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ],
+  "env": {
+    "SMTP_HOST": "smtp.hostinger.com",
+    "SMTP_PORT": "465",
+    "SMTP_SECURE": "true",
+    "SMTP_USER": "noreply@thecharanjitsingh.com",
+    "SMTP_PASS": "Sw33thrt@123",
+    "PORT": "3001"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "build.sh",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build/web"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/build/web/$1"
+    }
+  ],
+  "env": {
+    "FLUTTER_WEB_CANVASKIT_URL": "https://unpkg.com/canvaskit-wasm@0.38.0/bin/"
+  }
+}
