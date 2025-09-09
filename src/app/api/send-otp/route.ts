@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'User-Agent': 'Noor-Web-App/1.0',
       },
       body: JSON.stringify({
         email,
