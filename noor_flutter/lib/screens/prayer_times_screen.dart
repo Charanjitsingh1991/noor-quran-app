@@ -39,12 +39,20 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   void initState() {
     super.initState();
     _initializeTimezone();
-    _initializePrayerTimes();
-    _startClock();
   }
 
   Future<void> _initializeTimezone() async {
     tz.initializeTimeZones();
+    // Initialize prayer times after timezone is ready
+    await _initializePrayerTimes();
+    _startClock();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Force refresh timezone when dependencies change (e.g., when country is updated)
+    _updateTimezoneTime();
   }
 
   @override
@@ -66,10 +74,13 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
 
   void _updateTimezoneTime() {
     try {
+      // Use a try-catch to safely access context
+      if (!mounted) return;
+
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final userProfile = authProvider.userProfile;
 
-      if (userProfile?.country != null) {
+      if (userProfile?.country != null && userProfile.country.isNotEmpty) {
         // Timezone mapping for countries
         final countryTimezones = {
           'United States of America': 'America/New_York',
@@ -224,7 +235,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
         };
 
         final timezoneName = countryTimezones[userProfile.country];
-        if (timezoneName != null) {
+        if (timezoneName != null && timezoneName.isNotEmpty) {
           try {
             final location = tz.getLocation(timezoneName);
             final now = tz.TZDateTime.now(location);
