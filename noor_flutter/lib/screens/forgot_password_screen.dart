@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import '../services/otp_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -32,19 +32,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     });
 
     try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(
+      // Use OTP service to send password reset OTP
+      final result = await OTPService.sendPasswordResetOTP(
         email: _emailController.text.trim(),
+        name: 'User',
       );
 
-      setState(() {
-        _isSuccess = true;
-        _message = 'Password reset link sent to your email';
-      });
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _isSuccess = false;
-        _message = _getErrorMessage(e.code);
-      });
+      if (result['success'] == true) {
+        setState(() {
+          _isSuccess = true;
+          _message = 'Password reset OTP sent to your email';
+        });
+
+        // Navigate to reset password OTP screen after a short delay
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            context.go('/reset-password-otp/${_emailController.text.trim()}');
+          }
+        });
+      } else {
+        setState(() {
+          _isSuccess = false;
+          _message = result['error'] ?? 'Failed to send password reset OTP';
+        });
+      }
     } catch (e) {
       setState(() {
         _isSuccess = false;
@@ -56,19 +67,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           _isLoading = false;
         });
       }
-    }
-  }
-
-  String _getErrorMessage(String errorCode) {
-    switch (errorCode) {
-      case 'user-not-found':
-        return 'No user found with this email address.';
-      case 'invalid-email':
-        return 'Please enter a valid email address.';
-      case 'too-many-requests':
-        return 'Too many requests. Please try again later.';
-      default:
-        return 'An error occurred. Please try again.';
     }
   }
 

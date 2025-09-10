@@ -84,6 +84,85 @@ class OTPService {
     }
   }
 
+  // Send password reset OTP
+  static Future<Map<String, dynamic>> sendPasswordResetOTP({
+    required String email,
+    String? name,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/forgot-password'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+          'name': name,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        return {
+          'success': true,
+          'message': data['message'],
+        };
+      } else {
+        return {
+          'success': false,
+          'error': data['error'] ?? 'Failed to send password reset OTP',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'error': 'Network error: ${e.toString()}',
+      };
+    }
+  }
+
+  // Verify password reset OTP and reset password
+  static Future<Map<String, dynamic>> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/reset-password'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+          'otp': otp,
+          'newPassword': newPassword,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        return {
+          'success': true,
+          'message': data['message'],
+        };
+      } else {
+        return {
+          'success': false,
+          'error': data['error'] ?? 'Failed to reset password',
+          'attemptsLeft': data['attemptsLeft'],
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'error': 'Network error: ${e.toString()}',
+      };
+    }
+  }
+
   // Health check
   static Future<bool> isServiceAvailable() async {
     try {

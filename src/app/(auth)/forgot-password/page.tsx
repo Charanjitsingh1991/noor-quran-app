@@ -4,9 +4,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +20,7 @@ const formSchema = z.object({
 export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -32,16 +32,40 @@ export default function ForgotPasswordPage() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      await sendPasswordResetEmail(auth, values.email);
-      toast({
-        title: 'Check your email',
-        description: 'A password reset link has been sent to your email address.',
+      // Send OTP for password reset instead of Firebase reset link
+      const response = await fetch('/api/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: values.email,
+          name: 'User',
+        }),
       });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: 'OTP Sent',
+          description: 'A password reset OTP has been sent to your email address.',
+        });
+
+        // Redirect to OTP verification page
+        router.push(`/reset-password-otp?email=${encodeURIComponent(values.email)}`);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: data.error || 'Failed to send password reset OTP.',
+        });
+      }
     } catch (error: any) {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: error.message,
+        description: 'Failed to send password reset OTP. Please try again.',
       });
     } finally {
       setLoading(false);

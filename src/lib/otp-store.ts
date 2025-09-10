@@ -4,6 +4,7 @@ interface OTPData {
   expiresAt: number;
   name: string;
   attempts: number;
+  type?: string; // 'email_verification' | 'password_reset'
 }
 
 class OTPStore {
