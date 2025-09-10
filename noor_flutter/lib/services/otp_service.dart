@@ -2,18 +2,18 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class OTPService {
-  // Production OTP service URL
-  static const String baseUrl = 'https://noor-otp-service.vercel.app';
-  // static const String baseUrl = 'http://localhost:3001'; // Uncomment for local development
+  // Production webapp URL (which now handles SMTP directly)
+  static const String baseUrl = 'https://noor-web-ortdphjb7-charanjit-singhs-projects-01b838c6.vercel.app';
+  // static const String baseUrl = 'http://localhost:3000'; // Uncomment for local development
 
-  // Send OTP to email
+  // Send OTP to email using webapp's SMTP
   static Future<Map<String, dynamic>> sendOTP({
     required String email,
     String? name,
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/api/send-otp'),
+        Uri.parse('$baseUrl/api/send-email'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -44,14 +44,14 @@ class OTPService {
     }
   }
 
-  // Verify OTP
+  // Verify OTP using webapp's verification
   static Future<Map<String, dynamic>> verifyOTP({
     required String email,
     required String otp,
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/api/verify-otp'),
+        Uri.parse('$baseUrl/api/verify-email'),
         headers: {
           'Content-Type': 'application/json',
         },

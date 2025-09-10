@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    console.error('Verify OTP API error:', error);
+    console.error('Verify email API error:', error);
     return NextResponse.json(
       {
         success: false,

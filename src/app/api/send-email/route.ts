@@ -18,7 +18,7 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, name } = await request.json();
+    const { email, name, type } = await request.json();
 
     if (!email) {
       return NextResponse.json(
@@ -76,11 +76,11 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error) {
-    console.error('Send OTP API error:', error);
+    console.error('Send email API error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to send OTP. Please try again.'
+        error: 'Failed to send email. Please try again.'
       },
       {
         status: 500,
