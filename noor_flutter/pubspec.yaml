@@ -37,6 +37,9 @@ dependencies:
   cloud_firestore: ^4.9.3
   firebase_auth: ^4.10.0
 
+  # Google Sign-In
+  google_sign_in: ^6.1.5
+
   # Notifications - Temporarily removed due to build issues
   # flutter_local_notifications: 15.1.3
 
