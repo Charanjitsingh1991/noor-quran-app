@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class OTPService {
   // Production webapp URL (which now handles SMTP directly)
-  static const String baseUrl = 'https://noor-web-ortdphjb7-charanjit-singhs-projects-01b838c6.vercel.app';
+  static const String baseUrl = 'https://noor-web-rlgzk0ybj-charanjit-singhs-projects-01b838c6.vercel.app';
   // static const String baseUrl = 'http://localhost:3000'; // Uncomment for local development
 
   // Send OTP to email using webapp's SMTP
