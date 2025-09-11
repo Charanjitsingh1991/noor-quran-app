@@ -188,19 +188,23 @@ class FCMService {
 
       for (final userDoc in usersSnapshot.docs) {
         final tokensSnapshot = await _firestore
-            .collection('users')
+            .collection(\'users\')
             .doc(userDoc.id)
-            .collection('fcmTokens')
-            .where('isActive', isEqualTo: true)
+            .collection(\'fcmTokens\')
+            .where(\'isActive\', isEqualTo: true)
             .get();
 
         for (final tokenDoc in tokensSnapshot.docs) {
-          final token = tokenDoc.data()['token'] as String?;
+          final token = tokenDoc.data()[\'token\'] as String?;
           if (token != null) {
             // Send notification to this token
             await _sendNotificationToToken(token, title, message, imageUrl);
           }
         }
+      }
+      // For demonstration, also send to the admin's own token if available
+      if (_fcmToken != null && _authProvider?.userProfile?.isAdmin == true) {
+        await _sendNotificationToToken(_fcmToken!, title, message, imageUrl);
       }
     } catch (e) {
       print('Error sending to all users: $e');
@@ -208,16 +212,24 @@ class FCMService {
   }
 
   Future<void> _sendNotificationToToken(String token, String title, String message, String? imageUrl) async {
-    // This would be implemented using FCM HTTP API or Cloud Functions
-    // For now, it's a placeholder
-    print('Sending notification to token: $token');
+    // In a real application, this would involve calling a backend service (e.g., a Firebase Cloud Function)
+    // that uses the Firebase Admin SDK to send FCM messages to the specified token.
+    // For this demonstration, we will simulate a successful send.
+    print(\'Simulating sending notification to token: $token\');
+    print(\'Title: $title, Message: $message, Image URL: $imageUrl\');
+    // Simulate a delay for sending
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   // Prayer time notifications
   Future<void> schedulePrayerNotifications() async {
-    // This would integrate with your prayer time calculation service
-    // For now, it's a placeholder
-    print('Scheduling prayer notifications');
+    // This would integrate with your prayer time calculation service and local notifications.
+    // For now, we\'ll simulate scheduling a notification.
+    print(\'Simulating scheduling prayer notifications.\');
+    // In a real app, you would calculate prayer times and schedule local notifications
+    // using a package like flutter_local_notifications.
+    await Future.delayed(const Duration(seconds: 1)); // Simulate scheduling delay
+    print(\'Prayer notifications simulated to be scheduled.\');
   }
 
   // Clean up inactive tokens
